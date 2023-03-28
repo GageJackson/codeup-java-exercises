@@ -12,14 +12,15 @@ public class MethodsExercises {
 
         System.out.printf("Your numbers %s and %s added are %s, subtracted are %s, multiplied are %s, divided are %s, and modulus-ed are %s %n", number1, number2, addedNumbers, subtractedNumbers, multipliedNumbers, dividedNumbers, moddedNumbers);
 
-        int userNumber = getInteger(1,20);
-        System.out.printf("Your number is %s%n", userNumber);
+//        int userNumber = getInteger(1,20);
+//        System.out.printf("Your number is %s%n", userNumber);
 
-       // findFactorial(userNumber);
+//        findFactorial(userNumber);
 
-        System.out.println("Let's play with dice! Choose a number between 1-100 for the total of di faces");
-        int diSize = getInteger(1,100);
-        rollDice(diSize);
+//        System.out.println("Let's play with dice! Choose a number between 1-100 for the total of di faces");
+//        int diSize = getInteger(1,100);
+//        rollDice(diSize);
+//        count(5);
     }
 
     public static float addition(float input1, float input2){
@@ -103,4 +104,14 @@ public class MethodsExercises {
             wouldLikeToRoll = rollAgain.equals("y") || rollAgain.equals("Y");
         }
     }
+    public static void count(int n) {
+        if (n <= 0) {
+            System.out.println("All done!");
+            return;
+        }
+        System.out.println(n);
+        count(n - 1);
+        count(n - 1);
+    }
+
 }
