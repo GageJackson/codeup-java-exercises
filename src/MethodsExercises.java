@@ -21,6 +21,7 @@ public class MethodsExercises {
 //        int diSize = getInteger(1,100);
 //        rollDice(diSize);
 //        count(5);
+        makeDashes(64);
     }
 
     public static float addition(float input1, float input2){
@@ -112,6 +113,14 @@ public class MethodsExercises {
         System.out.println(n);
         count(n - 1);
         count(n - 1);
+    }
+
+    public static void makeDashes(int n) {
+        String dashes = "";
+        for(int i = 0; i < n; i++){
+            dashes += "-";
+        }
+        System.out.println(dashes);
     }
 
 }
