@@ -4,13 +4,33 @@ public class Input {
     private Scanner scanner = new Scanner(System.in);
 
     public String getString(String prompt) {
+        String userInput = "";
+        userInput = validString();
         System.out.println(prompt);
-        return scanner.nextLine();
+        return userInput;
     }
 
     public String getString() {
+        String userInput = "";
+        userInput = validString();
         System.out.println("Say anything");
-        return scanner.nextLine();
+        return userInput;
+    }
+
+    public String validString() {
+        boolean isString = false;
+        String userString = "";
+
+        while (!isString) {
+            if (scanner.hasNext()) {
+                userString = scanner.next();
+                isString = true;
+            } else {
+                System.out.println("Please enter a String");
+                scanner.next();
+            }
+        }
+        return userString;
     }
 
     public boolean yesNo(String prompt) {
