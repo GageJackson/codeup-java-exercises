@@ -5,15 +5,15 @@ public class Input {
 
     public String getString(String prompt) {
         String userInput = "";
-        userInput = validString();
         System.out.println(prompt);
+        userInput = validString();
         return userInput;
     }
 
     public String getString() {
         String userInput = "";
-        userInput = validString();
         System.out.println("Say anything");
+        userInput = validString();
         return userInput;
     }
 
@@ -21,13 +21,13 @@ public class Input {
         boolean isString = false;
         String userString = "";
 
-        while (!isString) {
+        while (!isString || userString.equals("") || userString.equals(" ")) {
             if (scanner.hasNext()) {
-                userString = scanner.next();
+                userString = scanner.nextLine();
                 isString = true;
             } else {
                 System.out.println("Please enter a String");
-                scanner.next();
+                scanner.nextLine();
             }
         }
         return userString;
@@ -133,5 +133,50 @@ public class Input {
             }
         }
         return userDouble;
+    }
+
+    public long getLong(long min, long max, String prompt) {
+        long userInput = 0;
+        do{
+            System.out.println(prompt);
+            userInput = validLong();
+        }while (userInput > max || userInput < min);
+
+        return userInput;
+    }
+
+    public long getLong(long min, long max) {
+        long userInput = 0;
+        do{
+            System.out.printf("Please enter an integer between %s and %s %n", min, max);
+            userInput = validLong();
+        }while (userInput > max || userInput < min);
+
+        return userInput;
+    }
+
+    public long getLong(String prompt) {
+        System.out.println(prompt);
+        return validLong();
+    }
+
+    public long getLong() {
+        return validLong();
+    }
+
+    public long validLong() {
+        boolean isLong = false;
+        long userLong = 0;
+
+        while (!isLong) {
+            if (scanner.hasNextLong()) {
+                userLong = scanner.nextLong();
+                isLong = true;
+            } else {
+                System.out.println("Please enter a Long number");
+                scanner.next();
+            }
+        }
+        return userLong;
     }
 }
