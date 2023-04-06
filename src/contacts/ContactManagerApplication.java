@@ -13,6 +13,7 @@ import java.util.List;
 public class ContactManagerApplication {
     Input input = new Input();
     boolean runProgram = true;
+
     public static void main(String[] args) {
         ContactManagerApplication cma = new ContactManagerApplication();
         cma.setupFile();
@@ -21,6 +22,7 @@ public class ContactManagerApplication {
             int userChoice = cma.createCLI();
             cma.doThing(userChoice);
         }while (cma.runProgram);
+
         System.out.println("Have a good day!");
     }
 
@@ -79,17 +81,8 @@ public class ContactManagerApplication {
     }
 
     public void viewContacts(){
-        Path contactDataFile = getDataFile();
-        List<String> contactList = null;
-
-        try {
-            contactList = Files.readAllLines(contactDataFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        List<String> contactList = getList();
         handleContacts(contactList);
-
     }
 
     public void addContact(){
@@ -97,52 +90,78 @@ public class ContactManagerApplication {
         long newContactNumber = input.getLong("Add a new contact number");
         String newContact = newContactName + "," + newContactNumber;
 
-        try {
-            Files.write(
-                    getDataFile(),
-                    Arrays.asList(newContact),
-                    StandardOpenOption.APPEND
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeFile(Arrays.asList(newContact), true);
     }
 
     public void searchContacts(){
-        System.out.println("You are searching contacts");
+        viewContacts();
+        String searchContact = input.getString("Search for a contact");
+
+        List<String> originalList = getList();
+        List<String> newList = searchList(originalList, searchContact, false);
+
+        writeFile(newList, false);
+        viewContacts();
+
+        writeFile(originalList, false);
     }
 
     public void deleteContact(){
         viewContacts();
         String removeContact = input.getString("Remove contact");
 
+        List<String> oldList = getList();
+        List<String> newList = searchList(oldList, removeContact, true);
 
-        List<String> lines = null;
-        List<String> newList = new ArrayList<>();
-
-        try {
-            lines = Files.readAllLines(getDataFile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        for (String line : lines) {
-            if (line.contains(removeContact)) {
-                continue;
-            }
-            newList.add(line);
-        }
-
-        try {
-            Files.write(getDataFile(), newList);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeFile(newList, false);
     }
 
     public void exit(){
         runProgram = false;
+    }
+
+    public void writeFile(List<String> info, boolean append){
+            try {
+                if(!append) {
+                    Files.write(getDataFile(), info);
+                } else {
+                    Files.write(getDataFile(), info, StandardOpenOption.APPEND);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+    }
+
+    public List<String> getList(){
+        List<String> list = new ArrayList<>();
+
+        try {
+            list = Files.readAllLines(getDataFile());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
+    }
+
+    public List<String> searchList(List<String> info, String searchTerm, boolean containsTerm){
+        List<String> newList = new ArrayList<>();
+
+        if(containsTerm){
+            for (String line : info) {
+                if (line.contains(searchTerm)) {
+                    continue;
+                }
+                newList.add(line);
+            }
+        } else {
+            for (String line : info) {
+                if (line.contains(searchTerm)) {
+                    newList.add(line);
+                }
+            }
+        }
+        return newList;
     }
 
     public void handleContacts(List<String> contactList){
@@ -169,28 +188,30 @@ public class ContactManagerApplication {
         displayContacts( contactNames,  contactNumbers, longestStringInt);
     }
 
-    public void displayContacts(ArrayList<String> contactNames, ArrayList<String> contactNumbers, int longestStringInt){
+    public void displayContacts(ArrayList<String> contactNames, ArrayList<String> contactNumbers, int longestNameSize){
         String dashes = "";
-        for (int i = 0; i < longestStringInt + 19; i++) {
+        int longestPhoneSize = 12;
+        int gutterSpaceCount = 4;
+        int separatingLineCount = 3;
+        for (int i = 0; i < longestNameSize+ longestPhoneSize + gutterSpaceCount + separatingLineCount; i++) {
             dashes += "-";
         }
         System.out.println(dashes);
-        formatContacts("Name", "Phone Number", longestStringInt);
+        formatContacts("Name", "Phone Number", longestNameSize, longestPhoneSize);
 
         System.out.println(dashes);
         for (int i = 0; i < contactNames.size(); i++) {
-            formatContacts(contactNames.get(i),contactNumbers.get(i), longestStringInt);
+            formatContacts(contactNames.get(i),contactNumbers.get(i), longestNameSize, longestPhoneSize);
         }
         System.out.println(dashes + "\n");
     }
 
-    public void formatContacts(String contactName, String contactNumber, int nameFormat){
+    public void formatContacts(String contactName, String contactNumber, int longestNameSize, int longestPhoneSize){
         String formattedContact = "| ";
-        int numberFormat = 12;
-        formattedContact += String.format("%-" + nameFormat + "." + nameFormat + "s", contactName);
+        formattedContact += String.format("%-" + longestNameSize + "." + longestNameSize + "s", contactName);
         formattedContact += " | ";
 
-        formattedContact += String.format("%-" + numberFormat + "." + numberFormat + "s", contactNumber);;
+        formattedContact += String.format("%-" + longestPhoneSize + "." + longestPhoneSize + "s", contactNumber);;
         formattedContact += " |";
 
         System.out.println(formattedContact);
